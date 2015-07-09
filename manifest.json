@@ -7,6 +7,6 @@
     "content_scripts": [{
         "matches": ["*://*.voat.co/*", "*://fakevout.azurewebsites.net/*"],
         "css": ["css/pen.css"],
-        "js": ["js/contentScript.js"]
+        "js": ["js/Voat.js", "js/contentScript.js"]
     }]
 }
