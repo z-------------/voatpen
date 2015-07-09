@@ -1,0 +1,12 @@
+{
+    "manifest_version": 2,
+    "name": "Pen for Voat",
+    "description": "View links and discussions side-by-side.",
+    "version": "0.0.1",
+
+    "content_scripts": [{
+        "matches": ["*://*.voat.co/*", "*://fakevout.azurewebsites.net/*"],
+        "css": ["css/pen.css"],
+        "js": ["js/contentScript.js"]
+    }]
+}
