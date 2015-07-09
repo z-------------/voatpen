@@ -7,7 +7,7 @@ var Voat = function(key, baseUrl) {
 
     this.request = function() {
         var endpoint = arguments[0];
-        var data = {};
+        var data = null;
         var callback = function(r) {
             console.log(r);
         };
@@ -20,7 +20,17 @@ var Voat = function(key, baseUrl) {
             var callback = arguments[arguments.length - 1];
         }
 
-        var url = "http://fakevout.azurewebsites.net/api/v1/" + endpoint;
+        var url = "http://fakevout.azurewebsites.net/api/" + endpoint;
+
+        /* determine if request should be GET or POST */
+
+        var verb = "GET";
+
+        if (data) {
+            verb = "POST";
+        }
+
+        /* make and send the request */
 
         var xhr = new XMLHttpRequest();
 
@@ -29,10 +39,23 @@ var Voat = function(key, baseUrl) {
             callback(response);
         };
 
-        xhr.open("get", url, true);
+        xhr.open(verb, url, true);
 
         xhr.setRequestHeader("Voat-ApiKey", key);
+        if (verb === "POST") {
+            var params = [];
+            if (typeof data.body === "object" && data.body !== null) {
+                Object.keys(data.body).forEach(function(key) {
+                    var val = data.body[key];
+                    params.push(key + "=" + val);
+                });
+            }
 
-        xhr.send();
+            var paramsStr = params.join("&");
+
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        }
+
+        xhr.send(paramsStr || null);
     };
 };
