@@ -5,11 +5,19 @@ var Voat = function(key, baseUrl) {
         return key;
     };
 
-    this.request = function(endpoint, callback) {
-        if (!callback || typeof callback !== "function") {
-            var callback = function(r) {
-                console.log(r);
-            };
+    this.request = function() {
+        var endpoint = arguments[0];
+        var data = {};
+        var callback = function(r) {
+            console.log(r);
+        };
+
+        if (typeof arguments[1] === "object" && arguments[1] !== null) {
+            var data = arguments[1];
+        }
+
+        if (arguments[arguments.length - 1] === "function") {
+            var callback = arguments[arguments.length - 1];
         }
 
         var url = "http://fakevout.azurewebsites.net/api/v1/" + endpoint;
