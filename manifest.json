@@ -4,9 +4,18 @@
     "description": "View links and discussions side-by-side.",
     "version": "0.0.1",
 
+    "permissions": [
+        "tabs"
+    ],
+
     "content_scripts": [{
-        "matches": ["*://*.voat.co/*", "*://fakevout.azurewebsites.net/*"],
+        "matches": ["<all_urls>"],
         "css": ["css/pen.css"],
         "js": ["js/Voat.js", "js/contentScript.js"]
-    }]
+    }],
+
+    "background": {
+        "scripts": ["js/background.js"],
+        "persistent": false
+    }
 }

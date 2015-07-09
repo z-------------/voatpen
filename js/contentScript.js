@@ -12,26 +12,18 @@ function elem(tagName, classOrId) {
     return elem;
 }
 
-/* insert pen markup */
+/* listen for click */
 
-var container = elem("div", ".pen-container");
-container.classList.add("hidden");
-
-var buttonsContainer = elem("div", ".pen_buttons");
-var closeButton = elem("button", ".pen_buttons--close-button");
-buttonsContainer.appendChild(closeButton);
-container.appendChild(buttonsContainer);
-
-var contentContainer = elem("div", ".pen_content");
-
-var contentFrame = elem("iframe", ".pen_content--frame");
-contentContainer.appendChild(contentFrame);
-
-var contentComments = elem("div", ".pen_content--comments");
-contentContainer.appendChild(contentComments);
-var commentsList = elem("ul", ".pen_content--comments--list");
-contentComments.appendChild(commentsList);
-
-container.appendChild(contentContainer);
-
-document.body.appendChild(container);
+document.querySelector(".sitetable").addEventListener("click", function(e) {
+    console.log("click event");
+    if (e.target.tagName.toLowerCase() === "a" && e.target.classList.contains("title")) {
+        console.log("is link click");
+        chrome.runtime.sendMessage({
+            type: "click",
+            data: {
+                id: e.target.parentElement.parentElement.parentElement.dataset.fullname,
+                url: e.target.href
+            }
+        });
+    }
+});
