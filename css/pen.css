@@ -12,12 +12,25 @@ body.pen-opened {
     overflow-y: auto;
     z-index: 999999;
     display: none;
+    padding: 10px;
 }
 
 .pen-opened .pen-container {
     display: block;
 }
 
+.pen_info {
+    border-bottom: solid 1px #ccc;
+}
+
+.pen_comment {
+    padding: 10px;
+}
+
 .pen_comment .pen_comment {
     margin-left: 10px;
+}
+
+.pen_comment_author, .pen_comment_time, .pen_info_author, .pen_info_subverse, .pen_info_time {
+    font-weight: 700;
 }

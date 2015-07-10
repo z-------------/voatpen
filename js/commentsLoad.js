@@ -44,7 +44,8 @@ function loadComments(data) {
                             var title = r.data.title;
                             var date = new Date(r.data.date);
                             var subverse = r.data.subverse;
-                            elemSubmissionInfo.innerHTML = "<h1>" + title + "</h1><time>" + date + "</time><div>/v/" + subverse + "</div>";
+                            var author = r.data.userName;
+                            elemSubmissionInfo.innerHTML = "<h1 class='pen_info_title'>" + title + "</h1><div class='pen_info_author'>" + author + "</div><time class='pen_info_time'>" + date + "</time><div class='pen_info_subverse'>/v/" + subverse + "</div>";
                         }
                     });
 
