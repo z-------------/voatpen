@@ -45,7 +45,10 @@ function loadComments(data) {
                             var date = new Date(r.data.date);
                             var subverse = r.data.subverse;
                             var author = r.data.userName;
-                            elemSubmissionInfo.innerHTML = "<h1 class='pen_info_title'>" + title + "</h1><div class='pen_info_author'>" + author + "</div><time class='pen_info_time'>" + date + "</time><div class='pen_info_subverse'>/v/" + subverse + "</div>";
+                            elemSubmissionInfo.innerHTML = "<h1 class='pen_info_title'>" + title + "</h1>\
+                            <div class='pen_info_author'>" + author + "</div>\
+                            <time class='pen_info_time'>" + date + "</time>\
+                            <div class='pen_info_subverse'>/v/" + subverse + "</div>";
                         }
                     });
 
