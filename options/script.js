@@ -19,3 +19,10 @@ form.onsubmit =  function(e) {
         outputElem.textContent = "Options saved.";
     });
 };
+
+chrome.storage.local.get("authentication", function(r) {
+    if (r.authentication) {
+        usernameInput.value = r.authentication.username;
+        passwordInput.value = r.authentication.password;
+    }
+});
