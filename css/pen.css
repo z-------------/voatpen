@@ -34,3 +34,8 @@ body.pen-opened {
 .pen_comment_author, .pen_comment_time, .pen_info_author, .pen_info_subverse, .pen_info_time {
     font-weight: 700;
 }
+
+.pen_container .highlighted {
+    box-shadow: 0 0 0 5px rgba(0, 0, 0, .3);
+    background-color: #f80;
+}
