@@ -99,7 +99,7 @@ var Voat = function(key, baseUrl) {
         xhr.send(verb === "POST" ? params : null);
     };
 
-    this.authorize = function(user, pass) {
+    this.authorize = function(user, pass, callback) {
         this.request("token", {
             verb: "POST",
             type: "application/x-www-form-urlencoded",
@@ -110,11 +110,9 @@ var Voat = function(key, baseUrl) {
             }
         }, function(r) {
             if (r.access_token) {
-                console.log(r.access_token);
                 token = r.access_token;
-            } else {
-                console.log("auth failed", r);
             }
+            callback(r);
         });
     };
 };
