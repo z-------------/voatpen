@@ -25,6 +25,32 @@ function loadComments(data) {
                     console.log("requesting", "v1/v/" + subverse + "/" + id + "/comments");
                     v.request("v1/v/" + subverse + "/" + id + "/comments", function(r) {
                         console.log(r);
+                        if (r.success) {
+                            /* setup elements */
+
+                            var elemContainer = elem("div", ".pen-container");
+                            var elemListComments = elem("div", ".pen_comments");
+                            elemContainer.appendChild(elemListComments);
+
+                            /* display comments */
+
+                            r.data.forEach(function(datum) {
+                                console.log(datum);
+
+                                var elemComment = elem("div", ".pen_comment");
+                                elemComment.innerHTML = "<div class='pen_comment_content'></div>\
+                                <div class='pen_comment_author'></div><time class='pen_comment_time'></time>";
+                                elemComment.querySelector(".pen_comment_content").innerHTML = datum.formattedContent;
+                                elemComment.querySelector(".pen_comment_author").textContent = datum.userName;
+                                elemComment.querySelector(".pen_comment_time").textContent = new Date(datum.date).toString();
+
+                                elemListComments.appendChild(elemComment);
+                            });
+
+                            elemContainer.appendChild(elemListComments);
+                            document.body.appendChild(elemContainer);
+                            document.body.classList.add("pen-opened");
+                        }
                     });
                 } else {
                     console.log("auth fail");
