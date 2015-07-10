@@ -22,18 +22,39 @@ function loadComments(data) {
             v.authorize(username, password, function(r) {
                 if (v.getToken()) {
                     console.log("auth success");
+
+                    /* setup elements */
+
+                    var elemContainer = elem("div", ".pen-container");
+                    var elemSubmissionInfo = elem("div", ".pen_info");
+                    var elemListComments = elem("div", ".pen_comments");
+                    elemContainer.appendChild(elemSubmissionInfo);
+                    elemContainer.appendChild(elemListComments);
+
+                    document.body.appendChild(elemContainer);
+                    document.body.classList.add("pen-opened");
+
+                    /* get submission info */
+
+                    console.log("requesting", "v1/submissions/" + id);
+                    v.request("v1/submissions/" + id, function(r) {
+                        console.log(r);
+                        if (r.success) {
+                            /* display info */
+                            var title = r.data.title;
+                            var date = new Date(r.data.date);
+                            var subverse = r.data.subverse;
+                            elemSubmissionInfo.innerHTML = "<h1>" + title + "</h1><time>" + date + "</time><div>/v/" + subverse + "</div>";
+                        }
+                    });
+
+                    /* get comments */
+
                     console.log("requesting", "v1/v/" + subverse + "/" + id + "/comments");
                     v.request("v1/v/" + subverse + "/" + id + "/comments", function(r) {
                         console.log(r);
                         if (r.success) {
-                            /* setup elements */
-
-                            var elemContainer = elem("div", ".pen-container");
-                            var elemListComments = elem("div", ".pen_comments");
-                            elemContainer.appendChild(elemListComments);
-
                             /* display comments */
-
                             r.data.forEach(function(datum) {
                                 console.log(datum);
 
@@ -55,8 +76,6 @@ function loadComments(data) {
                             });
 
                             elemContainer.appendChild(elemListComments);
-                            document.body.appendChild(elemContainer);
-                            document.body.classList.add("pen-opened");
                         }
                     });
                 } else {
