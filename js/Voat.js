@@ -1,4 +1,4 @@
-var Voat = function(key, baseUrl) {
+var Voat = function(key) {
     var key = key;
     var token = null;
 
