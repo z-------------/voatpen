@@ -11,3 +11,7 @@ body.pen-opened {
     background-color: #fff;
     overflow-y: auto;
 }
+
+.pen_comment .pen_comment {
+    margin-left: 10px;
+}

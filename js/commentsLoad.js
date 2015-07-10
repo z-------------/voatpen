@@ -38,13 +38,20 @@ function loadComments(data) {
                                 console.log(datum);
 
                                 var elemComment = elem("div", ".pen_comment");
+                                elemComment.dataset.id = datum.id;
                                 elemComment.innerHTML = "<div class='pen_comment_content'></div>\
                                 <div class='pen_comment_author'></div><time class='pen_comment_time'></time>";
+
                                 elemComment.querySelector(".pen_comment_content").innerHTML = datum.formattedContent;
                                 elemComment.querySelector(".pen_comment_author").textContent = datum.userName;
                                 elemComment.querySelector(".pen_comment_time").textContent = new Date(datum.date).toString();
 
-                                elemListComments.appendChild(elemComment);
+                                if (datum.parentID !== null) {
+                                    var elemParentComment = elemListComments.querySelector(".pen_comment[data-id='" + datum.parentID + "']");
+                                    elemParentComment.appendChild(elemComment);
+                                } else {
+                                    elemListComments.appendChild(elemComment);
+                                }
                             });
 
                             elemContainer.appendChild(elemListComments);
