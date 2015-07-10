@@ -2,7 +2,7 @@ body.pen-opened {
     width: calc(100% - 300px);
 }
 
-.pen-opened .pen-container {
+.pen-container {
     position: fixed;
     right: 0;
     top: 0;
@@ -10,6 +10,12 @@ body.pen-opened {
     height: 100%;
     background-color: #fff;
     overflow-y: auto;
+    z-index: 999999;
+    display: none;
+}
+
+.pen-opened .pen-container {
+    display: block;
 }
 
 .pen_comment .pen_comment {
