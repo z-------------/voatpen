@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pen for Voat - options</title>
+        <meta charset="utf-8">
+        <style>
+            label {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="options">
+            <h2>Authentication</h2>
+            <p><strong>Note</strong>: this information is stored using the chrome.storage.local api.</p>
+            <label>
+                <span>Username</span>
+                <input type="text" name="username">
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" name="password">
+            </label>
+            <button id="save">Save</button>
+        </form>
+        <output id="output"></output>
+
+        <script src="script.js"></script>
+    </body>
+</html>

@@ -8,7 +8,8 @@ document.querySelector(".sitetable").addEventListener("click", function(e) {
             type: "click",
             data: {
                 id: e.target.parentElement.parentElement.parentElement.dataset.fullname,
-                url: e.target.href
+                url: e.target.href,
+                subverse: e.target.parentElement.parentElement.querySelector(".subverse").textContent
             }
         });
     }

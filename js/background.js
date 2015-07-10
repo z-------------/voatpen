@@ -5,7 +5,10 @@ function tabListener(tab) {
     console.log(tab.url);
     if (linkHistory[linkHistory.length - 1].url === tabHistory[tabHistory.length - 1].url) {
         console.log("time to load voat comments");
-        chrome.tabs.sendMessage(tab.id, { type: "open" }, function() {
+        chrome.tabs.sendMessage(tab.id, {
+            type: "open",
+            data: linkHistory[linkHistory.length - 1]
+        }, function() {
             console.log("told tab to load voat comments");
         });
     }

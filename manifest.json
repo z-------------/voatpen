@@ -5,7 +5,8 @@
     "version": "0.0.1",
 
     "permissions": [
-        "tabs"
+        "tabs",
+        "storage"
     ],
 
     "content_scripts": [{
@@ -24,5 +25,10 @@
     "background": {
         "scripts": ["js/background.js"],
         "persistent": false
+    },
+
+    "options_ui": {
+        "page": "options/index.html",
+        "chrome_style": true
     }
 }
