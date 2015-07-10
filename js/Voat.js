@@ -29,7 +29,7 @@ var Voat = function(key) {
             var callback = arguments[arguments.length - 1];
         }
 
-        var url = "http://fakevout.azurewebsites.net/api/" + endpoint;
+        var url = "https://fakevout.azurewebsites.net/api/" + endpoint;
 
         /* determine verb (GET or POST) */
 
