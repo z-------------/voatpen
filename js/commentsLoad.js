@@ -39,6 +39,13 @@ function loadComments(data) {
                     <button class='pen_vote_button pen_vote--down'>Down</button>\
                     </div>";
 
+                    var VOAT_COMMENT_COMPOSE_HTML = "<div class='pen_compose_container'>\
+                    <textarea class='pen_compose' placeholder='Type your reply...'></textarea>\
+                    <button class='pen_compose_send'>Send</button>\
+                    </div>";
+
+                    /* listen for vote click */
+
                     elemContainer.addEventListener("click", function(e) {
                         if (e.target.classList.contains("pen_vote_button")) {
                             if (e.target.classList.contains("pen_vote--up")) {
@@ -57,7 +64,39 @@ function loadComments(data) {
 
                             e.target.classList.toggle("highlighted");
                         }
-                    })
+                    });
+
+                    /* listen for reply compose button click */
+
+                    elemContainer.addEventListener("click", function(e) {
+                        if (e.target.classList.contains("pen_comment_action--reply")) {
+                            e.target.parentElement.parentElement.querySelector(".pen_compose_container").classList.toggle("hidden");
+                        }
+                    });
+
+                    /* listen for reply send button click */
+
+                    elemContainer.addEventListener("click", function(e) {
+                        if (e.target.classList.contains("pen_compose_send")) {
+                            var type = (e.target.parentElement.parentElement.classList.contains("pen_info")
+                                ? "submission" : "comment");
+                            var id = e.target.parentElement.parentElement.dataset.id;
+                            var requestUrl;
+                            if (type === "submission") {
+                                requestUrl = "v1/v/" + subverse + "/" + id + "/comment";
+                            } else {
+                                requestUrl = "v1/comments/" + id;
+                            }
+                            v.request(requestUrl, {
+                                verb: "POST",
+                                body: {
+                                    value: e.target.parentElement.querySelector(".pen_compose").value
+                                }
+                            }, function(r) {
+                                console.log(r);
+                            });
+                        }
+                    });
 
                     /* get submission info */
 
@@ -70,10 +109,13 @@ function loadComments(data) {
                             var date = new Date(r.data.date);
                             var subverse = r.data.subverse;
                             var author = r.data.userName;
+
                             elemSubmissionInfo.innerHTML = VOAT_BUTTONS_HTML + "<h1 class='pen_info_title'>" + title + "</h1>\
                             <div class='pen_info_author'>" + author + "</div>\
                             <time class='pen_info_time'>" + date + "</time>\
-                            <div class='pen_info_subverse'>/v/" + subverse + "</div>";
+                            <div class='pen_info_subverse'>/v/" + subverse + "</div>"
+                            + VOAT_COMMENT_COMPOSE_HTML;
+
                             elemSubmissionInfo.dataset.id = id;
                         }
                     });
@@ -91,11 +133,15 @@ function loadComments(data) {
                                 var elemComment = elem("div", ".pen_comment");
                                 elemComment.dataset.id = datum.id;
                                 elemComment.innerHTML = VOAT_BUTTONS_HTML + "<div class='pen_comment_content'></div>\
-                                <div class='pen_comment_author'></div><time class='pen_comment_time'></time>";
+                                <div class='pen_comment_author'></div><time class='pen_comment_time'></time>\
+                                <div class='pen_comment_actions'>\
+                                <button class='pen_comment_action--reply'>Reply</button>\
+                                </div>" + VOAT_COMMENT_COMPOSE_HTML;
 
                                 elemComment.querySelector(".pen_comment_content").innerHTML = datum.formattedContent;
                                 elemComment.querySelector(".pen_comment_author").textContent = datum.userName;
                                 elemComment.querySelector(".pen_comment_time").textContent = new Date(datum.date).toString();
+                                elemComment.querySelector(".pen_compose_container").classList.add("hidden");
 
                                 if (datum.parentID !== null) {
                                     var elemParentComment = elemListComments.querySelector(".pen_comment[data-id='" + datum.parentID + "']");

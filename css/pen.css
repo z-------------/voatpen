@@ -35,7 +35,11 @@ body.pen-opened {
     font-weight: 700;
 }
 
-.pen_container .highlighted {
+.pen-container .highlighted {
     box-shadow: 0 0 0 5px rgba(0, 0, 0, .3);
     background-color: #f80;
+}
+
+.pen-container .hidden {
+    display: none;
 }
