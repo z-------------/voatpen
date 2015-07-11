@@ -1,13 +1,57 @@
+var pen_commentsLoaded = false; // becomes true after comments are loaded 1st time
+
+var id, url, surverse; // global so refreshComments() can access
+
+var pen_cachedComments = [];
+
+var v;
+
+var VOAT_BUTTONS_HTML = "<div class='pen_vote'>\
+<button class='pen_vote_button pen_vote--up'>Up</button>\
+<button class='pen_vote_button pen_vote--down'>Down</button>\
+</div>";
+
+var VOAT_COMMENT_COMPOSE_HTML = "<div class='pen_compose_container'>\
+<textarea class='pen_compose' placeholder='Type your reply...'></textarea>\
+<button class='pen_compose_send'>Send</button>\
+</div>";
+
+var elemContainer, elemSubmissionInfo, elemListComments;
+
+/* function for turning a comment object into an element and appending it */
+
+function displayComment(datum) {
+    var elemComment = elem("div", ".pen_comment");
+    elemComment.dataset.id = datum.id;
+    elemComment.innerHTML = VOAT_BUTTONS_HTML + "<div class='pen_comment_content'></div>\
+    <div class='pen_comment_author'></div><time class='pen_comment_time'></time>\
+    <div class='pen_comment_actions'>\
+    <button class='pen_comment_action--reply'>Reply</button>\
+    </div>" + VOAT_COMMENT_COMPOSE_HTML;
+
+    elemComment.querySelector(".pen_comment_content").innerHTML = datum.formattedContent;
+    elemComment.querySelector(".pen_comment_author").textContent = datum.userName;
+    elemComment.querySelector(".pen_comment_time").textContent = new Date(datum.date).toString();
+    elemComment.querySelector(".pen_compose_container").classList.add("hidden");
+
+    if (datum.parentID !== null) {
+        var elemParentComment = elemListComments.querySelector(".pen_comment[data-id='" + datum.parentID + "']");
+        elemParentComment.appendChild(elemComment);
+    } else {
+        elemListComments.appendChild(elemComment);
+    }
+}
+
 /* function for loading and displaying the comments */
 
 function loadComments(data) {
-    var id = data.id;
-    var url = data.url;
-    var subverse = data.subverse;
+    id = data.id;
+    url = data.url;
+    subverse = data.subverse;
 
     console.log("going to load comments from submission", id, "on subverse", subverse , "for url", url);
 
-    var v = new Voat("m/7lZ30KOvfUsY58CpXvFw==");
+    v = new Voat("m/7lZ30KOvfUsY58CpXvFw==");
 
     /* get username and password from chrome.storage */
 
@@ -22,27 +66,18 @@ function loadComments(data) {
             v.authorize(username, password, function(r) {
                 if (v.getToken()) {
                     console.log("auth success");
+                    pen_commentsLoaded = true;
 
                     /* setup elements */
 
-                    var elemContainer = elem("div", ".pen-container");
-                    var elemSubmissionInfo = elem("div", ".pen_info");
-                    var elemListComments = elem("div", ".pen_comments");
+                    elemContainer = elem("div", ".pen-container");
+                    elemSubmissionInfo = elem("div", ".pen_info");
+                    elemListComments = elem("div", ".pen_comments");
                     elemContainer.appendChild(elemSubmissionInfo);
                     elemContainer.appendChild(elemListComments);
 
                     document.body.appendChild(elemContainer);
                     document.body.classList.add("pen-opened");
-
-                    var VOAT_BUTTONS_HTML = "<div class='pen_vote'>\
-                    <button class='pen_vote_button pen_vote--up'>Up</button>\
-                    <button class='pen_vote_button pen_vote--down'>Down</button>\
-                    </div>";
-
-                    var VOAT_COMMENT_COMPOSE_HTML = "<div class='pen_compose_container'>\
-                    <textarea class='pen_compose' placeholder='Type your reply...'></textarea>\
-                    <button class='pen_compose_send'>Send</button>\
-                    </div>";
 
                     /* listen for vote click */
 
@@ -94,6 +129,10 @@ function loadComments(data) {
                                 }
                             }, function(r) {
                                 console.log(r);
+                                refreshComments();
+
+                                e.target.parentElement.classList.add("hidden");
+                                e.target.parentElement.querySelector(".pen_compose").value = "";
                             });
                         }
                     });
@@ -127,37 +166,52 @@ function loadComments(data) {
                         console.log(r);
                         if (r.success) {
                             /* display comments */
+
                             r.data.forEach(function(datum) {
                                 console.log(datum);
 
-                                var elemComment = elem("div", ".pen_comment");
-                                elemComment.dataset.id = datum.id;
-                                elemComment.innerHTML = VOAT_BUTTONS_HTML + "<div class='pen_comment_content'></div>\
-                                <div class='pen_comment_author'></div><time class='pen_comment_time'></time>\
-                                <div class='pen_comment_actions'>\
-                                <button class='pen_comment_action--reply'>Reply</button>\
-                                </div>" + VOAT_COMMENT_COMPOSE_HTML;
-
-                                elemComment.querySelector(".pen_comment_content").innerHTML = datum.formattedContent;
-                                elemComment.querySelector(".pen_comment_author").textContent = datum.userName;
-                                elemComment.querySelector(".pen_comment_time").textContent = new Date(datum.date).toString();
-                                elemComment.querySelector(".pen_compose_container").classList.add("hidden");
-
-                                if (datum.parentID !== null) {
-                                    var elemParentComment = elemListComments.querySelector(".pen_comment[data-id='" + datum.parentID + "']");
-                                    elemParentComment.appendChild(elemComment);
-                                } else {
-                                    elemListComments.appendChild(elemComment);
-                                }
+                                displayComment(datum);
                             });
 
                             elemContainer.appendChild(elemListComments);
+
+                            /* cache comments */
+                            pen_cachedComments = r.data;
                         }
                     });
                 } else {
                     console.log("auth fail");
                 }
             });
+        }
+    });
+}
+
+/* function for refreshing comments */
+
+function refreshComments() {
+    console.log("requesting", "v1/v/" + subverse + "/" + id + "/comments");
+    v.request("v1/v/" + subverse + "/" + id + "/comments", function(r) {
+        console.log(r);
+        if (r.success) {
+            var newComments = [];
+
+            var pen_cachedCommentsIds = pen_cachedComments.map(function(comment) {
+                return comment.id;
+            });
+
+            r.data.forEach(function(datum) {
+                if (pen_cachedCommentsIds.indexOf(datum.id) === -1) {
+                    newComments.push(datum);
+                }
+            });
+
+            newComments.forEach(function(newComment) {
+                pen_cachedComments.push(newComment);
+                displayComment(newComment);
+            });
+
+            console.log(newComments);
         }
     });
 }
